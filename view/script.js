@@ -289,6 +289,24 @@ function loadtransaksiTable() {
 			window.open('report.php?' + params)
 		},
 	})
+
+	$(transaksiTable).navButtonAdd(transaksiPager, {
+   	caption: "All Exports",
+		title: "All Exports",
+		id: "allExports",
+		buttonicon: "ui-icon-document",
+		onClickButton:function(){
+			let params
+			for (var key in postData) {
+		    if (params != "") {
+		        params += "&";
+		    }
+		    params += key + "=" + encodeURIComponent(postData[key]);
+			}
+
+			window.open('export.php?' + params)
+		},
+	})
 	
 
 	.keyControl()
