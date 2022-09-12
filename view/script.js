@@ -69,9 +69,9 @@ function loadtransaksiTable() {
 	$(transaksiTable).jqGrid({
 		url: "ajax.php?cari=datatable",
 		datatype: 'JSON',
-		caption: 'Customers Datassss',
+		caption: 'Data Transaksi',
 		rownumbers: true,
-		height: 277,
+		height: 260,
 		autowidth: true,
 		shrinkToFit: false,
 		viewrecords: true,
@@ -271,7 +271,7 @@ function loadtransaksiTable() {
 		},
 	})
 
-	/*
+	
 	$(transaksiTable).navButtonAdd(transaksiPager, {
    	caption: "All Reports",
 		title: "All Reports",
@@ -286,10 +286,10 @@ function loadtransaksiTable() {
 		    params += key + "=" + encodeURIComponent(postData[key]);
 			}
 
-			window.open('transaksi/report?' + params)
+			window.open('report.php?' + params)
 		},
 	})
-	*/
+	
 
 	.keyControl()
 }
