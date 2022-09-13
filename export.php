@@ -33,7 +33,7 @@ foreach ($customers as $customer) {
     $sheet->setCellValue('F'.$row, $customer->phone);
     $sheet->setCellValue('G'.$row, $customer->saldo)->getStyle('G'.$row)->getNumberFormat()
     // ->setFormatCode('#,##0');
-    ->setFormatCode(PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_IDR_SIMPLE);
+    ->setFormatCode('"Rp "#,##_-');
 
     $sheet->setCellValue('H'.$row, $customer->address);
     $row++;
