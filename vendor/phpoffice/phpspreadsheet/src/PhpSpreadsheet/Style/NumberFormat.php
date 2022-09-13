@@ -42,6 +42,8 @@ class NumberFormat extends Supervisor
     const FORMAT_DATE_TIME8 = 'h:mm:ss;@';
     const FORMAT_DATE_YYYYMMDDSLASH = 'yyyy/mm/dd;@';
 
+    const FORMAT_CURRENCY_IDR_SIMPLE = '"Rp "#,##_-';
+    const FORMAT_CURRENCY_IDR = 'Rp #,##_-';
     const FORMAT_CURRENCY_USD_SIMPLE = '"$"#,##0.00_-';
     const FORMAT_CURRENCY_USD = '$#,##0_-';
     const FORMAT_CURRENCY_EUR_SIMPLE = '#,##0.00_-"€"';

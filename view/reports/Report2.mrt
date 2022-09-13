@@ -1,10 +1,10 @@
 {
-  "ReportGuid": "5eb9beb9e3b0df65d4a9b875475e80ff",
+  "ReportGuid": "3cd75feb5423c2738ef6c14153c2d29f",
   "ReportName": "Report",
   "ReportAlias": "Report",
   "ReportFile": "Report.mrt",
   "ReportCreated": "/Date(1662515386000+0700)/",
-  "ReportChanged": "/Date(1663043828000+0700)/",
+  "ReportChanged": "/Date(1662617604000+0700)/",
   "EngineVersion": "EngineV2",
   "CalculationMode": "Interpretation",
   "ReportUnit": "Centimeters",
@@ -17,31 +17,31 @@
         "Alias": "root",
         "Columns": {
           "0": {
-            "Name": "id",
+            "Name": "address",
             "Index": -1,
-            "NameInSource": "id",
-            "Alias": "id",
+            "NameInSource": "address",
+            "Alias": "address",
             "Type": "System.String"
           },
           "1": {
-            "Name": "nofaktur",
+            "Name": "genders",
             "Index": -1,
-            "NameInSource": "nofaktur",
-            "Alias": "nofaktur",
+            "NameInSource": "genders",
+            "Alias": "genders",
             "Type": "System.String"
           },
           "2": {
-            "Name": "tanggal",
-            "Index": -1,
-            "NameInSource": "tanggal",
-            "Alias": "tanggal",
-            "Type": "System.String"
-          },
-          "3": {
             "Name": "nama",
             "Index": -1,
             "NameInSource": "nama",
             "Alias": "nama",
+            "Type": "System.String"
+          },
+          "3": {
+            "Name": "nofaktur",
+            "Index": -1,
+            "NameInSource": "nofaktur",
+            "Alias": "nofaktur",
             "Type": "System.String"
           },
           "4": {
@@ -59,28 +59,14 @@
             "Type": "System.String"
           },
           "6": {
-            "Name": "address",
+            "Name": "tanggal",
             "Index": -1,
-            "NameInSource": "address",
-            "Alias": "address",
-            "Type": "System.String"
-          },
-          "7": {
-            "Name": "gender_id",
-            "Index": -1,
-            "NameInSource": "gender_id",
-            "Alias": "gender_id",
-            "Type": "System.String"
-          },
-          "8": {
-            "Name": "genders",
-            "Index": -1,
-            "NameInSource": "genders",
-            "Alias": "genders",
+            "NameInSource": "tanggal",
+            "Alias": "tanggal",
             "Type": "System.String"
           }
         },
-        "NameInSource": "Data.root"
+        "NameInSource": "data.root"
       }
     },
     "Databases": {
@@ -479,15 +465,7 @@
               "TextOptions": {
                 "WordWrap": true
               },
-              "TextQuality": "Wysiwyg",
-              "TextFormat": {
-                "Ident": "StiCurrencyFormatService",
-                "NegativePattern": 0,
-                "DecimalDigits": 0,
-                "GroupSeparator": ",",
-                "UseLocalSetting": false,
-                "PositivePattern": 0
-              }
+              "TextQuality": "Wysiwyg"
             }
           },
           "DataSourceName": "root"

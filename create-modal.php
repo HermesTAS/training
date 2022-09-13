@@ -14,6 +14,9 @@
 			<td>
 				<input type="text" id="nofaktur" name="nofaktur" class="FormElement ui-widget-content ui-corner-all" autocomplete="off">
 			</td>
+			<td  class="errorForm" id="nofakturError">
+				<span id="" class="">No Faktur Harus diisi</span>
+			</td>
 		</tr>
 		<tr>
 			<td>
@@ -22,13 +25,19 @@
 			<td>
 				<input type="text" name="tanggalfaktur" class="FormElement ui-widget-content ui-corner-all hasDatePicker" required autocomplete="off" maxlength="10">
 			</td>
+			<td  class="errorForm" id="tanggalfakturError">
+				<span id="" class="">Tanggal Faktur Harus diisi</span>
+			</td>
 		</tr>
 		<tr>
 			<td>
 				<label>Name Pelanggan</label>
 			</td>
 			<td>
-				<input type="text" name="namapelanggan" class="FormElement ui-widget-content ui-corner-all" required autocomplete="off">
+				<input type="PelangganError" name="namapelanggan" class="FormElement ui-widget-content ui-corner-all" required autocomplete="off">
+			</td>
+			<td  class="errorForm" id="namapelangganError">
+				<span id="" class="">Nama Pelanggan Harus diisi</span>
 			</td>
 		</tr>
 		<tr>
@@ -38,6 +47,9 @@
 			<td>
 				<select id="gender" class="FormElement ui-widget-content ui-corner-all" name="gender_id" required></select>
 			</td>
+			<td  class="errorForm" id="gender_idError">
+				<span id="" class="">Gender Harus diisi</span>
+			</td>
 		</tr>
 		<tr>
 			<td>
@@ -45,6 +57,9 @@
 			</td>
 			<td>
 				<input type="text" name="phone" class="FormElement ui-widget-content ui-corner-all im-phone im-numeric" required autoco,digitalGroupSpacing:'4'mplete="off">
+			</td>
+			<td  class="errorForm" id="phoneError">
+				<span id="" class="">Phone Harus diisi</span>
 			</td>
 		</tr>
 		<tr>
@@ -54,6 +69,9 @@
 			<td>
 				<input type="text" name="saldo" class="FormElement ui-widget-content ui-corner-all im-currency" required autocomplete="off">
 			</td>
+			<td  class="errorForm" id="saldoError">
+				<span id="" class="">Saldo Harus diisi</span>
+			</td>
 		</tr>
 		<tr>
 			<td>
@@ -61,6 +79,9 @@
 			</td>
 			<td>
 				<textarea name="address" class="FormElement ui-widget-content ui-corner-all" required autocomplete="off"></textarea>
+			</td>
+			<td  class="errorForm" id="addressError">
+				<span id="" class="">Address Harus diisi</span>
 			</td>
 		</tr>
 
@@ -199,7 +220,7 @@
 	})
 
 	function formBindKeys() {
-		let inputs = $('#customerForm [name]:not(:hidden)')
+		let inputs = $('#transaksiForm [name]:not(:hidden)')
 		let element
 		let position
 

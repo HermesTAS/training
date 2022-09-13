@@ -20,6 +20,9 @@ require_once 'core/init.php';
 			<td>
 				<input type="text" id="nofaktur" value="<?=$find['nofaktur']?>" name="nofaktur" class="FormElement ui-widget-content ui-corner-all" autocomplete="off">
 			</td>
+			<td  class="errorForm" id="nofakturError">
+				<span id="" class="">No Faktur Harus diisi</span>
+			</td>
 		</tr>
 		<tr>
 			<td>
@@ -27,6 +30,9 @@ require_once 'core/init.php';
 			</td>
 			<td>
 				<input type="text" name="tanggal" value="<?=$tanggal?>" class="FormElement ui-widget-content ui-corner-all hasDatePicker" required autocomplete="off" maxlength="10">
+			</td>
+			<td  class="errorForm" id="tanggalfakturError">
+				<span id="" class="">Tanggal Faktur Harus diisi</span>
 			</td>
 		</tr>
 		<tr>
@@ -36,6 +42,9 @@ require_once 'core/init.php';
 			<td>
 				<input type="text" name="nama" value="<?=$find['nama']?>" class="FormElement ui-widget-content ui-corner-all" required autocomplete="off">
 			</td>
+			<td  class="errorForm" id="namapelangganError">
+				<span id="" class="">Nama Pelanggan Harus diisi</span>
+			</td>
 		</tr>
 		<tr>
 			<td>
@@ -43,6 +52,9 @@ require_once 'core/init.php';
 			</td>
 			<td>
 				<select id="gender" class="FormElement ui-widget-content ui-corner-all" name="gender_id" value="<?=$find['gender_id']?>" required></select>
+			</td>
+			<td  class="errorForm" id="gender_idError">
+				<span id="" class="">Gender Harus diisi</span>
 			</td>
 		</tr>
 		<tr>
@@ -52,6 +64,9 @@ require_once 'core/init.php';
 			<td>
 				<input type="text" name="phone" value="<?=$find['phone']?>" class="FormElement ui-widget-content ui-corner-all im-phone im-numeric" required autoco,digitalGroupSpacing:'4'mplete="off">
 			</td>
+			<td  class="errorForm" id="phoneError">
+				<span id="" class="">Phone Harus diisi</span>
+			</td>
 		</tr>
 		<tr>
 			<td>
@@ -60,6 +75,9 @@ require_once 'core/init.php';
 			<td>
 				<input type="text" name="saldo" value="<?=$find['saldo']?>" class="FormElement ui-widget-content ui-corner-all im-currency" required autocomplete="off">
 			</td>
+			<td  class="errorForm" id="saldoError">
+				<span id="" class="">Saldo Harus diisi</span>
+			</td>
 		</tr>
 		<tr>
 			<td>
@@ -67,6 +85,9 @@ require_once 'core/init.php';
 			</td>
 			<td>
 				<textarea name="address" class="FormElement ui-widget-content ui-corner-all" required autocomplete="off"><?=$find['address']?></textarea>
+			</td>
+			<td  class="errorForm" id="addressError">
+				<span id="" class="">Address Harus diisi</span>
 			</td>
 		</tr>
 
