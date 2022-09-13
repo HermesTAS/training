@@ -28,6 +28,7 @@ $(window).resize(function() {
 $(document).ready(function() {
 	loadtransaksiTable()
 	$("#gs_phone").attr("type","number");
+	$("#gs_saldo").attr("type","number");
 
 	// loadOrderTable()
   // loadSocket()
@@ -127,10 +128,10 @@ function loadtransaksiTable() {
 	        {
 	            index:'saldo',
 	            name:'saldo',
-				stype:'number',
+				// stype:'number',
 				align:"right",
 	            label:'saldo',
-				formatter: 'integer',
+				// formatter: 'integer',
 
 				formatoptions: {  thousandsSeparator: '.' }
 
