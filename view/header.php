@@ -14,7 +14,11 @@
            padding: 0;
         }
         .highlight { background-color: red }
-
+        .errorForm{
+            display:none;
+            color:red;
+            background-color:yellow;
+        }
         </style>
     </head>
     <body>

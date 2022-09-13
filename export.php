@@ -9,6 +9,8 @@ require_once "function/report.php";
 $customers = json_decode(report());
 $spreadsheet = new Spreadsheet();
 $sheet = $spreadsheet->getActiveSheet();
+
+
 $sheet->setCellValue('A1', 'No');
 $sheet->setCellValue('B1', 'No Faktur');
 $sheet->setCellValue('C1', 'Tanggal');
@@ -29,7 +31,10 @@ foreach ($customers as $customer) {
     $sheet->setCellValue('D'.$row, $customer->nama);
     $sheet->setCellValue('E'.$row, $customer->genders);
     $sheet->setCellValue('F'.$row, $customer->phone);
-    $sheet->setCellValue('G'.$row, $customer->saldo);
+    $sheet->setCellValue('G'.$row, $customer->saldo)->getStyle('G'.$row)->getNumberFormat()
+    // ->setFormatCode('#,##0');
+    ->setFormatCode('"Rp "#,##_-');
+
     $sheet->setCellValue('H'.$row, $customer->address);
     $row++;
 }

@@ -1,10 +1,10 @@
 {
-  "ReportGuid": "78c7555ee10d99f1bd3b9545050b273f",
+  "ReportGuid": "bf308c0b3cc70bb8aaac6d87ca15888b",
   "ReportName": "Report",
   "ReportAlias": "Report",
-  "ReportFile": "CustomersList.mrt",
+  "ReportFile": "PelangganLaporan.mrt",
   "ReportCreated": "/Date(1627101723000+0700)/",
-  "ReportChanged": "/Date(1662619029000+0700)/",
+  "ReportChanged": "/Date(1663045100000+0700)/",
   "EngineVersion": "EngineV2",
   "CalculationMode": "Interpretation",
   "ReportUnit": "Centimeters",
@@ -443,13 +443,23 @@
               "Text": {
                 "Value": "{root.saldo}"
               },
-              "HorAlignment": "Center",
+              "HorAlignment": "Right",
               "VertAlignment": "Center",
               "Border": ";217,226,243;;;;;;solid:0,0,0",
               "Brush": "solid:255,255,255",
               "TextBrush": "solid:0,0,0",
               "TextOptions": {
                 "WordWrap": true
+              },
+              "TextFormat": {
+                "Ident": "StiCurrencyFormatService",
+                "NegativePattern": 0,
+                "DecimalSeparator": ",",
+                "DecimalDigits": 0,
+                "GroupSeparator": ".",
+                "UseLocalSetting": false,
+                "PositivePattern": 0,
+                "Symbol": "Rp "
               },
               "Type": "DataColumn"
             },

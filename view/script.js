@@ -27,6 +27,9 @@ $(window).resize(function() {
 
 $(document).ready(function() {
 	loadtransaksiTable()
+	$("#gs_phone").attr("type","number");
+	$("#gs_saldo").attr("type","number");
+
 	// loadOrderTable()
   // loadSocket()
 
@@ -112,9 +115,10 @@ function loadtransaksiTable() {
 	        {
 	            index:'phone',
 	            name:'phone',
-				stype:'number',
+				// stype:'number',
 				align:"right",
-	            label:'phone'
+	            label:'phone',
+				// formatter: 'string',
 	        },
 	        {
 	            index:'address',
@@ -124,7 +128,7 @@ function loadtransaksiTable() {
 	        {
 	            index:'saldo',
 	            name:'saldo',
-				stype:'number',
+				// stype:'number',
 				align:"right",
 	            label:'saldo',
 				formatter: 'integer',
@@ -182,7 +186,6 @@ function loadtransaksiTable() {
 				$('[id*=gs_]').on('input', function() {
 					highlightSearch = $(this).val()
 					clearTimeout(timeout)
-
 					timeout = setTimeout(function() {
 		    		$('#transaksi').trigger('reloadGrid')
 					}, 500);
@@ -278,38 +281,44 @@ function loadtransaksiTable() {
 		id: "allReports",
 		buttonicon: "ui-icon-document",
 		onClickButton:function(){
-			let params
-			for (var key in postData) {
-		    if (params != "") {
-		        params += "&";
-		    }
-		    params += key + "=" + encodeURIComponent(postData[key]);
-			}
-
-			window.open('report.php?' + params)
+			var totalRecord = $("#transaksi").getGridParam("records");
+			var formatExport = "report";
+			rangeExport(totalRecord,formatExport);
 		},
 	})
+	// $(transaksiTable).navButtonAdd(transaksiPager, {
+   	// caption: "All Reports",
+	// 	title: "All Reports",
+	// 	id: "allReports",
+	// 	buttonicon: "ui-icon-document",
+	// 	onClickButton:function(){
+	// 		let params
+	// 		for (var key in postData) {
+	// 	    if (params != "") {
+	// 	        params += "&";
+	// 	    }
+	// 	    params += key + "=" + encodeURIComponent(postData[key]);
+	// 		}
+
+	// 		window.open('report.php?' + params)
+	// 	},
+	// })
 
 	$(transaksiTable).navButtonAdd(transaksiPager, {
-   	caption: "All Exports",
-		title: "All Exports",
-		id: "allExports",
+   	caption: "All Export",
+		title: "All Export",
+		id: "allExport",
 		buttonicon: "ui-icon-document",
 		onClickButton:function(){
-			let params
-			for (var key in postData) {
-		    if (params != "") {
-		        params += "&";
-		    }
-		    params += key + "=" + encodeURIComponent(postData[key]);
-			}
-
-			window.open('export.php?' + params)
+			var totalRecord = $("#transaksi").getGridParam("records");
+			var formatExport = "Export";
+			rangeExport(totalRecord,formatExport);
 		},
 	})
 	
 
 	.keyControl()
+
 }
 
 function addtransaksi() {
@@ -323,6 +332,26 @@ function addtransaksi() {
 		position: [0, 0],
 		buttons: {
 			'Save': function() {
+				// $.each($(transaksiForm).serializeArray(),function(index,kolom){
+				// 	console.log([kolom.name, kolom.value]);
+				// })
+				// $(transaksiForm).validate({
+				// 	rules:{
+				// 		nofaktur:{ required:true},
+				// 		namapelanggan:{ required:true},
+				// 		tanggalfaktur:{ required:true},
+				// 		gender_id:{ required: true},
+				// 		phone:{ required:true},
+				// 		saldo:{ required:true},
+				// 		address:{ required:true},
+				// 	},
+				// 	submitHandler: function () { // for demo
+				// 		alert('valid form submitted'); // for demo
+				// 		console.log($(transaksiForm).serializeArray());
+				// 		console.log("sukkess");
+				// 		return false; // for demo
+				// 	}
+				// });
 				storetransaksi()
 			},
 			'Cancel': function() {
@@ -332,6 +361,21 @@ function addtransaksi() {
 		}
 	})
 }
+function validationForm(data){
+	var errorsMsg = true;
+	for (let i = 0; i < data.length; i++) {
+		if (data[i]['value'] == ''){
+			var elm = $("#"+data[i]['name']+"Error").show();
+			errorsMsg = false;
+		}else{
+			$("#"+data[i]['name']+"Error").hide();
+		}
+	}
+	if (errorsMsg) {
+		return true;
+	}
+	return false;
+}
 function storetransaksi() {
 	$.ajax({
 		url: 'ajax.php?cari=store_transaksi',
@@ -339,7 +383,10 @@ function storetransaksi() {
 		dataType: 'JSON',
 		data: $(transaksiForm).serializeArray(),
 		beforeSend: function() {
-			$('#errorBox').remove()
+			if(validationForm($(transaksiForm).serializeArray())){
+				return true;
+			}
+			return false;
 		},
 		success: function(res) {
 			if (res.status == 'submitted') {
@@ -361,7 +408,6 @@ function storetransaksi() {
 					}
 				})
 			} else {
-				console.log(res)
 				$('#gridData').before(`
 					<div id="errorBox" class="ui-state-error" style="padding: 5px;">
 						${res.messages}
@@ -438,6 +484,12 @@ function updatetransaksi(nofaktur) {
 		type: 'POST',
 		dataType: 'JSON',
 		data: $(transaksiForm).serializeArray(),
+		beforeSend:function () {
+			if(validationForm($(transaksiForm).serializeArray())){
+				return true;
+			}
+			return false;
+		},
 		success: function(res) {
 			$('#errorBox').remove()
 			if (res.status == 'submitted') {
@@ -501,6 +553,41 @@ function confirmDeletetransaksi(nofaktur) {
 				}
 			}
 		})
+	}
+}
+function rangeExport(totalRecord,formatExport) {
+  $(transaksiDialog).load('range-modal.php?total='+totalRecord+'&format='+formatExport)
+		.dialog({
+		modal: true,
+		title: "Range "+formatExport,
+		height: '200',
+		width: '650',
+		position: [0, 0],
+		buttons: {
+			'Export': function() {
+				var data = $(transaksiForm).serializeArray()
+				exportConfirm(formatExport,data);
+			},
+			'Cancel': function() {
+				$(transaksiDialog).dialog('close')
+				activeGrid = '#transaksi'	
+			}
+		}
+	})
+
+	function exportConfirm(formatExport,data) {
+		let params
+			for (var key in postData) {
+		    if (params != "") {
+		        params += "&";
+		    }
+		    params += key + "=" + encodeURIComponent(postData[key]);
+			}
+			from = data[0]['value']- 1;
+			params +='&from='+ from;
+			params +='&to='+data[1]['value'];
+			window.open(formatExport+'.php?' + params)
+			
 	}
 }
 

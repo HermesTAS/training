@@ -47,13 +47,15 @@ function report()
     }
     $sidx = $_REQUEST['sidx'];
     $sord = $_REQUEST['sord'];
+    $start = $_REQUEST['from'];
+    $limit = $_REQUEST['to'];
     if ($sidx == 'gender') {
         $sidx = "gender.nama";
     }else {
         $sidx = "transaksi.".$sidx;
     }
 
-    $SQL = "SELECT transaksi.*, gender.nama as genders FROM transaksi LEFT JOIN gender on gender.id = transaksi.gender_id where $search ORDER BY $sidx $sord ";
+    $SQL = "SELECT transaksi.*, gender.nama as genders FROM transaksi LEFT JOIN gender on gender.id = transaksi.gender_id where $search ORDER BY $sidx $sord LIMIT $start , $limit ";
     $result = mysqli_query($konek, $SQL) or die("Couldn't execute query." . mysqli_error($konek));
     $responce = new stdClass();
 
@@ -61,11 +63,12 @@ function report()
     $i = 0;
     $data = [];
     while ($kolom = mysqli_fetch_assoc($result)){
+        // $curency = number_format($kolom['saldo'],0,',','.');
+        // $kolom['saldo'] ='Rp. '.$curency;
         $data[$i] = $kolom;
         $i++;
     }
-
-  
+    
     return json_encode($data);
 
 }

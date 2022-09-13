@@ -12,7 +12,7 @@ require_once "view/header.php";
 
 
 <script type="text/javascript">
- let baseUrl = `<?=  "https://". $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']; ?>`
+ let baseUrl = `<?=  "http://". $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']; ?>`
  console.log(baseUrl);
 //  let baseUrl = "http://localhost/crudtest/"
 </script>
