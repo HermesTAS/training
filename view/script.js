@@ -131,7 +131,7 @@ function loadtransaksiTable() {
 				// stype:'number',
 				align:"right",
 	            label:'saldo',
-				// formatter: 'integer',
+				formatter: 'integer',
 
 				formatoptions: {  thousandsSeparator: '.' }
 
