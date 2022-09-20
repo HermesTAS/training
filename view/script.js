@@ -3,10 +3,10 @@ const transaksiPager = '#transaksiPager'
 const transaksiDialog = '#transaksiDialog'
 const transaksiForm = '#transaksiForm'
 
-// const orderTable = '#order'
-// const orderPager = '#orderPager'
-// const orderDialog = '#orderDialog'
-// const orderForm = '#orderForm'
+const detailTable = '#detail'
+const detailPager = '#detailPager'
+const detailDialog = '#detailDialog'
+const detailForm = '#detailForm'
 
 let indexRow = 0
 let sortName = 'nofaktur'
@@ -15,22 +15,22 @@ let highlightSearch
 let nofaktur
 let currentSearch
 let postData
-let ordersPostData
+let detailsPostData
 let triggerClick = true
 let activeGrid = '#transaksi'
 let socket
 
 $(window).resize(function() {
 	$(transaksiTable).setGridWidth($(window).width() - 15)
-	// $(orderTable).setGridWidth($(window).width() - 15)
+	$(detailTable).setGridWidth($(window).width() - 15)
 })
 
 $(document).ready(function() {
 	loadtransaksiTable()
 	$("#gs_phone").attr("type","number");
 	$("#gs_saldo").attr("type","number");
-
-	// loadOrderTable()
+	loadDetailTable()
+	showdetail()
   // loadSocket()
 
 	$('#t_transaksi').html(`
@@ -132,11 +132,25 @@ function loadtransaksiTable() {
 				align:"right",
 	            label:'saldo',
 				formatter: 'integer',
-
-				formatoptions: {  thousandsSeparator: '.' }
+				formatoptions: { 
+					decimalPlaces: 0,
+					decimalSeparator: ',',
+					thousandsSeparator: '.',
+				}
 
 	        },
 		],
+		onSelectRow: function(id) {
+			activeGrid = '#transaksi'
+			indexRow = $(this).jqGrid('getCell', id, 'rn') - 1
+			page = $(this).jqGrid('getGridParam', 'page') - 1
+			rows = $(this).jqGrid('getGridParam', 'postData').rows
+			if (indexRow >= rows) indexRow = (indexRow - rows * page)
+			nofaktur = $(this)
+				.jqGrid('getRowData', id).nofaktur
+			if (nofaktur) showdetail(id)
+
+		},
 		onSort: function(id) {
 			activeGrid = '#transaksi'
 			indexRow = $(this).jqGrid('getCell', id, 'rn') - 1
@@ -144,9 +158,7 @@ function loadtransaksiTable() {
 			rows = $(this).jqGrid('getGridParam', 'postData').rows
 			if (indexRow >= rows) indexRow = (indexRow - rows * page)
 			nofaktur = $(this)
-				.replace(/(<([^>]+)>)/ig,"")
 				.jqGrid('getRowData', id).nofaktur
-			if (nofaktur) showOrder(nofaktur)
 
 		},
 
@@ -286,23 +298,6 @@ function loadtransaksiTable() {
 			rangeExport(totalRecord,formatExport);
 		},
 	})
-	// $(transaksiTable).navButtonAdd(transaksiPager, {
-   	// caption: "All Reports",
-	// 	title: "All Reports",
-	// 	id: "allReports",
-	// 	buttonicon: "ui-icon-document",
-	// 	onClickButton:function(){
-	// 		let params
-	// 		for (var key in postData) {
-	// 	    if (params != "") {
-	// 	        params += "&";
-	// 	    }
-	// 	    params += key + "=" + encodeURIComponent(postData[key]);
-	// 		}
-
-	// 		window.open('report.php?' + params)
-	// 	},
-	// })
 
 	$(transaksiTable).navButtonAdd(transaksiPager, {
    	caption: "All Export",
@@ -321,6 +316,107 @@ function loadtransaksiTable() {
 
 }
 
+function loadDetailTable() {
+	$(detailTable).jqGrid({
+		datatype: 'JSON',
+		caption: 'details Data',
+		rownumbers: true,
+		autowidth: true,
+		shrinkToFit: false,
+		viewrecords: true,		
+		pager: $(detailPager),
+		rowNum:10,
+		rowList:[10,20,30],
+		footerrow: true,
+		userDataOnFooter: true,
+		height: 'auto',
+		sortable: true,
+		colModel: [
+			{
+				index: 'barang',
+				name: 'barang',
+				label: 'Barang',
+			},
+			{
+				index: 'harga',
+				name: 'harga',
+				label: 'Harga',
+				formatter: 'currency',
+				align: 'right',
+				formatoptions: {
+					decimalPlaces: 0,
+					decimalSeparator: ',',
+					thousandsSeparator: '.',
+				},
+			},
+			{
+				index: 'quantity',
+				name: 'quantity',
+				label: 'quantity',
+				align: 'right',
+				
+			},
+			{
+				index: 'total',
+				name: 'total',
+				label: 'total',
+				formatter: 'currency',
+				align: 'right',
+				formatoptions: {
+					decimalPlaces: 0,
+					decimalSeparator: ',',
+					thousandsSeparator: '.',
+				},
+			},
+			// {
+			// 	index: 'qty',
+			// 	name: 'qty',
+			// 	label: 'Qty',
+			// 	align: 'right',
+			// },
+			// {
+			// 	index: 'total_price',
+			// 	name: 'total_price',
+			// 	label: 'Total Price',
+			// 	formatter: 'currency',
+			// 	align: 'right',
+			// 	formatoptions: {
+			// 		decimalPlaces: 0,
+			// 		decimalSeparator: ',',
+			// 		thousandsSeparator: '.',
+			// 	},
+			// },
+		],
+		loadComplete: function(data) {
+			detailsPostData = $(this).jqGrid('getGridParam', 'postData')
+
+			sum = $('#detail').jqGrid("getCol", "total", false, "sum")
+
+			$('#detail').jqGrid('footerData', 'set', {
+	
+				quantity: 'Total',
+				total: sum,
+			}, true)
+		},
+		onSelectRow: function(id) {
+			activeGrid = '#detail'
+			noInvoice = $(this).jqGrid('getRowData', id).no_invoice
+		},
+		keys: true,
+	})
+	
+	.jqGrid('navGrid', detailPager,
+		{
+			search: false,
+			refresh: false,
+			add: false,
+			edit: false,
+			del: false,
+		}
+	)
+	.keyControl()
+}
+
 function addtransaksi() {
 	$(transaksiDialog).load('create-modal.php', function() {
 		$($(transaksiForm + ' input')[0]).focus()
@@ -328,7 +424,7 @@ function addtransaksi() {
 		modal: true,
 		title: "Add transaksi",
 		height: '500',
-		width: '650',
+		width: '950',
 		position: [0, 0],
 		buttons: {
 			'Save': function() {
@@ -365,11 +461,23 @@ function validationForm(data){
 	var errorsMsg = true;
 	for (let i = 0; i < data.length; i++) {
 		if (data[i]['value'] == ''){
-			var elm = $("#"+data[i]['name']+"Error").show();
+			if (i < 7) {
+				var elm = $("#"+data[i]['name']+"Error").show();
+			}
+			else{
+				var name = data[i]['name'].slice(0, -2);
+				var elm = $("#"+name+"Error").show();
+			}
 			errorsMsg = false;
 		}else{
-			$("#"+data[i]['name']+"Error").hide();
+			if (i < 7) {
+				$("#"+data[i]['name']+"Error").hide();
+			}else{
+				var name = data[i]['name'].slice(0, -2);
+				var elm = $("#"+name+"Error").hide();
+			}
 		}
+		
 	}
 	if (errorsMsg) {
 		return true;
@@ -408,11 +516,9 @@ function storetransaksi() {
 					}
 				})
 			} else {
-				$('#gridData').before(`
-					<div id="errorBox" class="ui-state-error" style="padding: 5px;">
-						${res.messages}
-					</div>
-				`)
+				alert("Maaf Ada kesalahan di server kami");
+				$(transaksiDialog).dialog('close')
+
 			}
 		}
 	})
@@ -430,7 +536,7 @@ function storetransaksi() {
 				$(transaksiDialog).dialog('close')
 
 				$.ajax({
-					url: baseUrl + '/transaksi/show/' + res.postData.no_invoice + '/' + res.postData[$(transaksiTable).jqGrid('getGridParam', 'sortname')] + '/' + $(transaksiTable).jqGrid('getGridParam', 'sortname') + '/' + $(transaksiTable).jqGrid('getGridParam', 'sortorder') + '/' + $(transaksiTable).jqGrid('getGridParam', 'postData').rows,
+					url: baseUrl + '/transaksi/show/' + res.postData.no_invoice + '/' + res.postData[$(transaksiTable).jqGrid('getGridParam', 'sortname')] + '/' + $(transaksiTable).jqGrid('getGridParam', 'sortname') + '/' + $(transaksiTable).jqGrid('getGridParam', 'sortdetail') + '/' + $(transaksiTable).jqGrid('getGridParam', 'postData').rows,
 					type: 'GET',
 					dataType: 'JSON',
 					success: function(res) {
@@ -493,10 +599,10 @@ function updatetransaksi(nofaktur) {
 		success: function(res) {
 			$('#errorBox').remove()
 			if (res.status == 'submitted') {
+				
 				$(transaksiDialog).dialog('close')
 
 				$.ajax({url:'ajax.php?cari=show&nofaktur='+res.postData.nofaktur+'&sort_index='+$(transaksiTable).jqGrid('getGridParam', 'sortname')+"&postData="+res.postData[$(transaksiTable).jqGrid('getGridParam', 'sortname')]+'&sort_order='+$(transaksiTable).jqGrid('getGridParam', 'sortorder')+'&limit='+$(transaksiTable).jqGrid('getGridParam', 'postData').rows,
-				
 					type: 'GET',
 					dataType: 'JSON',
 					success: function(res) {
@@ -512,11 +618,8 @@ function updatetransaksi(nofaktur) {
 					}
 				})
 			} else {
-				$('#transaksiData').before(`
-					<div id="errorBox" class="ui-state-error" style="padding: 5px;">
-						${res}
-					</div>
-				`)
+				alert("Maaf Ada kesalahan di server kami");
+				$(transaksiDialog).dialog('close')
 			}
 		}
 	})
@@ -550,6 +653,9 @@ function confirmDeletetransaksi(nofaktur) {
 				if (res == 'deleted') {
 					$(transaksiDialog).dialog('close')
 					$('#transaksi').trigger('reloadGrid')
+				}else{
+					alert("Maaf Ada kesalahan di server kami");
+				$(transaksiDialog).dialog('close')
 				}
 			}
 		})
@@ -592,11 +698,11 @@ function rangeExport(totalRecord,formatExport) {
 }
 
 
-// function showOrder(nofaktur) {
-// 	$('#order').jqGrid('setGridParam', {
-// 		url: baseUrl + 'order/show/' + nofaktur,
-// 	}).trigger('reloadGrid')
-// }
+function showdetail(id) {
+	$('#detail').jqGrid('setGridParam', {
+		url:'ajax.php?cari=detailtable&transaksi_id=' + id,
+	}).trigger('reloadGrid')
+}
 
 $.fn.keyControl = function (e) {
   var l = $.extend(

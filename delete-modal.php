@@ -74,42 +74,18 @@ require_once 'core/init.php';
 
 	<br>
 
-	<!-- <table width="100%" class="table ui-state-default" cellpadding="5" cellspacing="0" id="detailData">
+	<table width="100%" class="table ui-state-default" cellpadding="5" cellspacing="0" id="detailData">
 		<thead>
 			<tr>
-				<th class="ui-th-div">Item Name</th>
-				<th class="ui-th-div">Item Price</th>
-				<th class="ui-th-div">Qty</th>
+			<th class="ui-th-div">Barang</th>
+				<th class="ui-th-div">Harga</th>
 				<th class="ui-th-div">Action</th>
 			</tr>
 		</thead>
 		<tbody>
-			<tr>
-				<td>
-					<input type="text" name="item_name[]" class="FormElement ui-widget-content ui-corner-all" required autocomplete="off">
-				</td>
-				<td>
-					<input type="text" name="item_price[]" class="FormElement ui-widget-content ui-corner-all im-currency" required autocomplete="off">
-				</td>
-				<td>
-					<input type="text" name="qty[]" class="FormElement ui-widget-content ui-corner-all im-numeric" required autocomplete="off">
-				</td>
-				<td>
-					<a href="javascript:">
-						<span class="ui-icon ui-icon-trash" onclick="$(this).parent().parent().parent().remove()"></span>
-					</a>
-				</td>
-			</tr>
-			<tr>
-				<td colspan="3"></td>
-				<td>
-					<a href="javascript:" onclick="addRow(); setNumericFormat(); formBindKeys();">
-						<span class="ui-icon ui-icon-plus"></span>
-					</a>
-				</td>
-			</tr>
+			<tr></tr>
 		</tbody>
-	</table> -->
+	</table>
 </form>
 
 
@@ -121,27 +97,6 @@ require_once 'core/init.php';
 		setNumericFormat()
 		formBindKeys()
 	})
-
-	// function addRow() {
-	// 	$('#detailData tbody tr').last().before(`
-	// 		<tr>
-	// 			<td>
-	// 				<input type="text" name="item_name[]" class="FormElement ui-widget-content ui-corner-all" required autocomplete="off">
-	// 			</td>
-	// 			<td>
-	// 				<input type="text" name="item_price[]" class="FormElement ui-widget-content ui-corner-all im-currency" required autocomplete="off">
-	// 			</td>
-	// 			<td>
-	// 				<input type="text" name="qty[]" class="FormElement ui-widget-content ui-corner-all im-numeric" required autocomplete="off">
-	// 			</td>
-	// 			<td>
-	// 				<a href="javascript:">
-	// 					<span class="ui-icon ui-icon-trash" onclick="$(this).parent().parent().parent().remove()"></span>
-	// 				</a>
-	// 			</td>
-	// 		</tr>
-	// 	`)
-	// }
 
 	function setDateFormat() {
 		$('.hasDatePicker').datepicker({
@@ -210,6 +165,40 @@ require_once 'core/init.php';
 			})
 		}
 	})
+
+	$.ajax({
+		url: baseUrl + 'ajax.php?cari=detailshow&transaksi_id=<?=$find['id']?>',
+		type: 'GET',
+		dataType: 'JSON',
+		success: function(res) {
+			res.forEach(function(el, i) {
+				$('#detailData tbody tr').last().before(`
+					<tr>
+						<td>
+							<input type="text" readonly name="barang[]" value="${el.barang}" class="FormElement ui-widget-content ui-corner-all" required autocomplete="off">
+						</td>
+						<td>
+							<input type="text" readonly name="harga[]" value="${el.harga}" class="FormElement ui-widget-content ui-corner-all im-currencyt" required autocomplete="off">
+						</td>
+						
+						<td>
+							<a href="javascript:">
+								<span class="ui-icon ui-icon-trash" onclick="$(this).parent().parent().parent().remove()"></span>
+							</a>
+						</td>
+					</tr>
+				`)
+				AutoNumeric.multiple('.im-currencyt',{
+					currencySymbol :'idr ' ,
+					digitGroupSeparator	:'.',
+					decimalCharacter:',',
+					allowDecimalPadding:false
+
+				});
+			})
+		}
+	})
+
 
 	function formBindKeys() {
 		let inputs = $('#customerForm [name]:not(:hidden)')

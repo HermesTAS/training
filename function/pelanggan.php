@@ -60,20 +60,21 @@ function delete($id) {
 
 function read_detail($id)
 {
-    $qry= "SELECT * FROM detail_faktur where faktur_id = $id";
+    $qry= "SELECT * FROM transaksi_detail where transaksi_id = '$id'";
     return result($qry);
 }
 function edit_detail($data,$id)
 {
     $qry="";
-    $check = "SELECT * FROM faktur where id = $id";
+    $check = "SELECT * FROM transaksi where id = $id";
     if (run($check)) {
-        $delete_qry= "DELETE FROM `detail_faktur` WHERE faktur_id = $id";
+        $delete_qry= "DELETE FROM `transaksi_detail` WHERE transaksi_id = $id";
         run($delete_qry);
-        for ($i=0; $i < count($data['barang']); $i++) {
+        for ($i=0; $i < count($data); $i++) {
             $insert = [
-                "barang" => $data['barang'][$i],
-                "harga" => $data['harga'][$i]
+                "barang" => $data[$i]['barang'],
+                "harga" => $data[$i]['harga'],
+                "qty" => $data[$i]['qty'],
             ];
             create_detail($insert,$id);
         }
@@ -84,12 +85,18 @@ function edit_detail($data,$id)
 }
 function create_detail($data,$id)
 {
-    $barang = $data['barang'];
+    $barang  = strtoupper($data['barang']);
+    $qty  = strtoupper($data['qty']);
+
     $harga = $data['harga'];
-    $check = "SELECT * FROM faktur where id = $id";
+    $harga = str_replace("idr ","",$harga);
+    // $harga = substr($harga,4);
+    $harga = str_replace(".","",$harga);
+
+    $check = "SELECT * FROM transaksi where id = $id";
     if (run($check)) {
-        $faktur_id = $id;
-        $qry= "INSERT INTO detail_faktur (barang,harga,faktur_id) VALUES('$barang','$harga','$faktur_id')";
+        $transaksi_id = $id;
+        $qry= "INSERT INTO transaksi_detail (barang,harga,quantity,transaksi_id) VALUES('$barang','$harga','$qty','$transaksi_id')";
         return run($qry);
     }
     return run($show);
@@ -97,9 +104,9 @@ function create_detail($data,$id)
 
 
 function delete_detail ($id) {
-    $check = "SELECT * FROM detail_faktur where id = $id";
+    $check = "SELECT * FROM transaksi_detail where id = $id";
     if (run($check)) {
-        $qry= "DELETE FROM `detail_faktur` WHERE id = $id";
+        $qry= "DELETE FROM `transaksi_detail` WHERE id = $id";
         return run($qry);
     }
     return run($show);

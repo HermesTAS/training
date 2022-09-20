@@ -95,32 +95,30 @@ require_once 'core/init.php';
 
 	<br>
 
-	<!-- <table width="100%" class="table ui-state-default" cellpadding="5" cellspacing="0" id="detailData">
+	<table width="100%" class="table ui-state-default" cellpadding="5" cellspacing="0" id="detailData">
 		<thead>
 			<tr>
-				<th class="ui-th-div">Item Name</th>
-				<th class="ui-th-div">Item Price</th>
+				<th class="ui-th-div">Barang</th>
+				<th class="ui-th-div">Harga</th>
 				<th class="ui-th-div">Qty</th>
+				<th class="ui-th-div">Total Harga</th>
 				<th class="ui-th-div">Action</th>
 			</tr>
 		</thead>
 		<tbody>
-			<tr>
+			<!-- <tr>
 				<td>
-					<input type="text" name="item_name[]" class="FormElement ui-widget-content ui-corner-all" required autocomplete="off">
+					<input type="text" name="barang[]" class="FormElement ui-widget-content ui-corner-all" required autocomplete="off">
 				</td>
 				<td>
-					<input type="text" name="item_price[]" class="FormElement ui-widget-content ui-corner-all im-currency" required autocomplete="off">
-				</td>
-				<td>
-					<input type="text" name="qty[]" class="FormElement ui-widget-content ui-corner-all im-numeric" required autocomplete="off">
+					<input type="text" name="harga[]" class="FormElement ui-widget-content ui-corner-all im-currency" required autocomplete="off">
 				</td>
 				<td>
 					<a href="javascript:">
 						<span class="ui-icon ui-icon-trash" onclick="$(this).parent().parent().parent().remove()"></span>
 					</a>
 				</td>
-			</tr>
+			</tr> -->
 			<tr>
 				<td colspan="3"></td>
 				<td>
@@ -130,39 +128,80 @@ require_once 'core/init.php';
 				</td>
 			</tr>
 		</tbody>
-	</table> -->
+	</table>
 </form>
 
 
 <script type="text/javascript">
 	$(document).ready(function() {
 		let index = 0
-
 		setDateFormat()
 		setNumericFormat()
 		formBindKeys()
 	})
+	var indexRows = 0;
+	function addRow() {
+		indexRows++;
 
-	// function addRow() {
-	// 	$('#detailData tbody tr').last().before(`
-	// 		<tr>
-	// 			<td>
-	// 				<input type="text" name="item_name[]" class="FormElement ui-widget-content ui-corner-all" required autocomplete="off">
-	// 			</td>
-	// 			<td>
-	// 				<input type="text" name="item_price[]" class="FormElement ui-widget-content ui-corner-all im-currency" required autocomplete="off">
-	// 			</td>
-	// 			<td>
-	// 				<input type="text" name="qty[]" class="FormElement ui-widget-content ui-corner-all im-numeric" required autocomplete="off">
-	// 			</td>
-	// 			<td>
-	// 				<a href="javascript:">
-	// 					<span class="ui-icon ui-icon-trash" onclick="$(this).parent().parent().parent().remove()"></span>
-	// 				</a>
-	// 			</td>
-	// 		</tr>
-	// 	`)
-	// }
+		$('#detailData tbody tr').last().before(`
+			<tr>
+				<td>
+					<input type="text" name="barang[]" class="FormElement ui-widget-content ui-corner-all" required autocomplete="off">
+				</td>
+				<td>
+					<input type="text" id="harga${indexRows}" name="harga[]" onkeyup="cal(${indexRows})" class="hargaCal FormElement ui-widget-content ui-corner-all im-numeric im-currency" required autocomplete="off">
+				</td>
+				<td>
+					<input type="text" id="qty${indexRows}" name="qty[]" onkeyup="cal(${indexRows})" class="qtyCal FormElement ui-widget-content ui-corner-all im-currency" required autocomplete="off">
+				</td>
+				<td>
+					<input type="text" id="total_item${indexRows}" readonly name="total_item[]" class="FormElement ui-widget-content ui-corner-all im-numeric im-currency" required autocomplete="off">
+				</td>
+				
+				<td>
+					<a href="javascript:">
+						<span class="ui-icon ui-icon-trash" onclick="$(this).parent().parent().parent().remove()"></span>
+					</a>
+				</td>
+			</tr>
+		`)
+	}
+	$.ajax({
+		url: baseUrl + 'ajax.php?cari=detailshow&transaksi_id=<?=$find['id']?>',
+		type: 'GET',
+		dataType: 'JSON',
+		success: function(res) {
+			res.forEach(function(el, i) {
+				total = el.harga * el.quantity;
+				$('#detailData tbody tr').last().before(`
+				<tr>
+					<td>
+						<input type="text" value="${el.barang}" name="barang[]" class="FormElement ui-widget-content ui-corner-all" required autocomplete="off">
+					</td>
+					<td>
+						<input type="text" id="harga${el.id_detail}" value="${el.harga}" name="harga[]" onkeyup="cal(${el.id_detail})" class="hargaCal FormElement ui-widget-content ui-corner-all im-numeric im-currency formcur" required autocomplete="off">
+					</td>
+					<td>
+						<input type="text" id="qty${el.id_detail}" value="${el.quantity}" name="qty[]" onkeyup="cal(${el.id_detail})" class="qtyCal FormElement ui-widget-content ui-corner-all im-currency" required autocomplete="off">
+					</td>
+					<td>
+						<input type="text" id="total_item${el.id_detail}" readonly value="${total}" name="total_item[]" class="FormElement ui-widget-content ui-corner-all im-numeric im-currency formcur" required autocomplete="off">
+					</td>
+					
+					<td>
+						<a href="javascript:">
+							<span class="ui-icon ui-icon-trash" onclick="$(this).parent().parent().parent().remove()"></span>
+						</a>
+					</td>
+				</tr>
+				`)
+				setNumericFormat();
+				
+			})
+		}
+	})
+
+	
 
 	function setDateFormat() {
 		$('.hasDatePicker').datepicker({
@@ -201,14 +240,23 @@ require_once 'core/init.php';
 			  return false;
 			}
 		})
+		// new AutoNumeric.multiple('.im-currency', {
+		// 	digitGroupSeparator	:'.',
+		// 	decimalCharacter:',',
+		// 	allowDecimalPadding:false
+		// })
+		// $('.im-currency').css('text-align', 'right');
+		$('.im-currency').inputmask('integer', {
+			alias: 'numeric',
+			groupSeparator: '.',
+			autoGroup: true,
+			digitsOptional: false,
+			allowMinus: false,
+			placeholder: '',
+		}).css('text-align', 'right');
+		
     }
 
-    new AutoNumeric('.im-currency', {
-        currencySymbol :'idr ' ,
-        digitGroupSeparator	:'.',
-        decimalCharacter:',',
-        // allowDecimalPadding:false
-    });
     $('.im-phone').inputmask("+62 999-9999-99999");
 
 	$.ajax({
@@ -231,6 +279,16 @@ require_once 'core/init.php';
 			})
 		}
 	})
+	
+	function cal(id) {
+		harga =$('#harga'+id).val();
+		qty =$('#qty'+id).val();
+		harga = Number(harga.replace(/[^0-9-]+/g,""));
+		// console.log(qty);
+
+		hasil = harga * qty;
+		$('#total_item'+id).val(hasil);
+	}
 
 	function formBindKeys() {
 		let inputs = $('#customerForm [name]:not(:hidden)')

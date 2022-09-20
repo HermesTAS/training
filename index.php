@@ -1,7 +1,6 @@
 <?php
 require_once "core/init.php";
 
-$pelanggan = read();
 require_once "view/header.php";
 ?>
 
@@ -10,10 +9,14 @@ require_once "view/header.php";
 <div id="transaksiDialog"></div>
 <div id="progressbar" style="position: relative; z-index: 999;"></div>
 
+<table id="detail"></table>
+<div id="detailPager"></div>
+<div id="detailDialog"></div>
+<div id="progressbar" style="position: relative; z-index: 999;"></div>
+
 
 <script type="text/javascript">
  let baseUrl = `<?=  "http://". $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']; ?>`
- console.log(baseUrl);
 //  let baseUrl = "http://localhost/crudtest/"
 </script>
 
