@@ -3,8 +3,8 @@ require_once 'core/init.php';
 
 switch ($_GET['cari']) {
     case 'gender':
-    $SQL = "SELECT * FROM gender";
-    $result = mysqli_query($konek, $SQL) or die("Couldn't execute query." . mysqli_error($konek));
+        $SQL = "SELECT * FROM gender";
+        $result = mysqli_query($konek, $SQL) or die("Couldn't execute query." . mysqli_error($konek));
         $arr = [];
         while ($koloms = mysqli_fetch_array($result)){
             $arr[ ] = array(
@@ -15,21 +15,33 @@ switch ($_GET['cari']) {
         echo json_encode($arr);
         break;
     case 'store_transaksi':
-        create_transaksi($_POST);
-        $res=['status' => 'submitted',"postData"=>$_POST];
-        echo json_encode($res,200);
+        if (create_transaksi($_POST)) {
+            $res=['status' => 'submitted',"postData"=>$_POST];
+            echo json_encode($res,200);
+        }else {
+            $res=['status' => 'notsubmitted',"postData"=>$_POST];
+            echo json_encode($res,400);
+        }
         return 0;
         break;
     case 'update_transaksi':
-        update_transaksi($_POST,$_GET['id']);
-        $res=['status' => 'submitted',"postData"=>$_POST];
-        echo json_encode($res,200);
+        if (update_transaksi($_POST,$_GET['id'])) {
+            $res=['status' => 'submitted',"postData"=>$_POST];
+            echo json_encode($res,200);
+        }else {
+            $res=['status' => 'notsubmitted',"postData"=>$_POST];
+            echo json_encode($res,400);
+        }
         return 0;
         break;
     case 'delete_confirm':
-        delete_transaksi($_GET['id']);
-        $res=['deleted'];
-        echo json_encode($res,200);
+       if (delete_transaksi($_GET['id'])) {
+            $res=['deleted'];
+            echo json_encode($res,200);
+        }else {
+            $res=['status' => 'nodeleted'];
+            echo json_encode($res,400);
+        }
         return 0;
         break;
     case 'show':
@@ -83,7 +95,7 @@ switch ($_GET['cari']) {
                 "namapelanggan"=> "Pelanggan $angka",
                 "gender_id"=> $gender,
                 "phone"=> "+62 324697$angka",
-                "saldo"=> "idr 99.$angka,00",
+                "saldo"=> "99.$angka",
                 "address"=> "jl jalan no. $i"
             ]) ;
         }
@@ -91,104 +103,166 @@ switch ($_GET['cari']) {
         // echo json_encode($arr);
         return 0;
         break;
+    case 'detailshow':
+        $transaksi_id = $_GET['transaksi_id'];
+        $result = read_detail($transaksi_id);
+        $arr = [];
+        while ($koloms = mysqli_fetch_array($result)){
+            $arr[ ] = array(
+                'id_detail'=>$koloms['id'],
+                'barang'=>$koloms['barang'],
+                'harga'=>$koloms['harga'],
+                'quantity'=>$koloms['quantity'],
+            );
+        }
+        echo json_encode($arr);
+        return 0;
+        break;
     case 'datatable':
 
-    global $konek;
-    $pelanggan = read();
-    $search="";
-    if (isset($_REQUEST['global_search']) && strlen($_REQUEST['global_search'])) {
-        $global_search = $_REQUEST['global_search'];
-        $search .=" transaksi.nofaktur like '%$global_search%' or";
-        $search .=" tanggal like '%$global_search%' or";
-        $search .=" transaksi.nama like '%$global_search%' or";
-        $search .=" gender.nama like '%$global_search%' or";
-        $search .=" transaksi.phone like '%$global_search%' or";
-        $search .=" transaksi.address like '%$global_search%' or";
-        $search .=" transaksi.saldo like '%$global_search%' ";
-    }else{
-        if(isset($_REQUEST['nofaktur'])){
-            $nofaktur = $_REQUEST['nofaktur'];
-            $search .=" transaksi.nofaktur like '%$nofaktur%' and";
+        global $konek;
+        $search="";
+        if (isset($_REQUEST['global_search']) && strlen($_REQUEST['global_search'])) {
+            $global_search = $_REQUEST['global_search'];
+            $search .=" transaksi.nofaktur like '%$global_search%' or";
+            $search .=" tanggal like '%$global_search%' or";
+            $search .=" transaksi.nama like '%$global_search%' or";
+            $search .=" gender.nama like '%$global_search%' or";
+            $search .=" transaksi.phone like '%$global_search%' or";
+            $search .=" transaksi.address like '%$global_search%' or";
+            $search .=" transaksi.saldo like '%$global_search%' ";
+        }else{
+            if(isset($_REQUEST['nofaktur'])){
+                $nofaktur = $_REQUEST['nofaktur'];
+                $search .=" transaksi.nofaktur like '%$nofaktur%' and";
+            }
+            if(isset($_REQUEST['tanggal'])){
+                $tanggal = date("Y-m-d", strtotime($_REQUEST['tanggal']));
+                $search .=" tanggal = '$tanggal' and";
+            }
+            if(isset($_REQUEST['nama'])){
+                $nama = $_REQUEST['nama'];
+                $search .=" transaksi.nama like '%$nama%' and";
+            }
+            if(isset($_REQUEST['gender'])){
+                $gender = $_REQUEST['gender'];
+                $search .=" gender_id = '$gender' and";
+            }
+            if(isset($_REQUEST['phone'])){
+                $phone = $_REQUEST['phone'];
+                $search .=" transaksi.phone like '%$phone%' and";
+            }
+            if(isset($_REQUEST['address'])){
+                $address = $_REQUEST['address'];
+                $search .=" transaksi.address like '%$address%' and";
+            }
+            if(isset($_REQUEST['saldo'])){
+                $saldo = $_REQUEST['saldo'];
+                $search .=" transaksi.saldo like '%$saldo%' and";
+            }
+            $search .= " 1 ";
         }
-        if(isset($_REQUEST['tanggal'])){
-            $tanggal = date("Y-m-d", strtotime($_REQUEST['tanggal']));
-            $search .=" tanggal = '$tanggal' and";
-        }
-        if(isset($_REQUEST['nama'])){
-            $nama = $_REQUEST['nama'];
-            $search .=" transaksi.nama like '%$nama%' and";
-        }
-        if(isset($_REQUEST['gender'])){
-            $gender = $_REQUEST['gender'];
-            $search .=" gender_id = '$gender' and";
-        }
-        if(isset($_REQUEST['phone'])){
-            $phone = $_REQUEST['phone'];
-            $search .=" transaksi.phone like '%$phone%' and";
-        }
-        if(isset($_REQUEST['address'])){
-            $address = $_REQUEST['address'];
-            $search .=" transaksi.address like '%$address%' and";
-        }
-        if(isset($_REQUEST['saldo'])){
-            $saldo = $_REQUEST['saldo'];
-            $search .=" transaksi.saldo like '%$saldo%' and";
-        }
-        $search .= " 1 ";
-    }
 
+        $page = $_REQUEST['page'];
+        $limit = $_REQUEST['rows'];
+        $sidx = $_REQUEST['sidx'];
+        $sord = $_REQUEST['sord'];
 
+        if (! $sidx){
+            $sidx = 1;
+        }
+        $result = mysqli_query($konek, "SELECT COUNT(*) AS count FROM transaksi LEFT JOIN gender on gender.id = transaksi.gender_id where $search  ");
+        $row = mysqli_fetch_array($result);
+        $count = $row['count'];
+        if ($count > 0 && $limit > 0) {
+            $total_pages = ceil($count / $limit);
+        } else {
+            $total_pages = 0;
+        }
+        if ($page > $total_pages)
+            $page = $total_pages;
+        $start = $limit * $page - $limit;
+        if ($start < 0)
+            $start = 0;
 
-    $page = $_REQUEST['page'];
-    $limit = $_REQUEST['rows'];
-    $sidx = $_REQUEST['sidx'];
-    $sord = $_REQUEST['sord'];
+        $SQL = "SELECT transaksi.*, gender.nama as genders FROM transaksi LEFT JOIN gender on gender.id = transaksi.gender_id where $search ORDER BY $sidx $sord LIMIT $start , $limit";
+        $result = mysqli_query($konek, $SQL) or die("Couldn't execute query." . mysqli_error($konek));
+        $responce = new stdClass();
 
-    if (! $sidx){
-        $sidx = 1;
-    }
-    $result = mysqli_query($konek, "SELECT COUNT(*) AS count FROM transaksi LEFT JOIN gender on gender.id = transaksi.gender_id where $search  ");
-    $row = mysqli_fetch_array($result);
-    $count = $row['count'];
-    if ($count > 0 && $limit > 0) {
+        // echo $SQL; return 0;
+        $i = 0;
+        while ($kolom = mysqli_fetch_assoc($result)){
+
+            $responce->rows[$i]['id'] = $kolom['id'];
+            $responce->rows[$i]['cell'] = array(
+                $kolom['nofaktur'],
+                date('d-m-Y', strtotime($kolom['tanggal'])),
+                $kolom['nama'],
+                $kolom['genders'],
+                $kolom['phone'],
+                $kolom['address'],
+                $kolom['saldo'],
+
+            );
+            $i++;
+        }
+
         $total_pages = ceil($count / $limit);
-    } else {
-        $total_pages = 0;
-    }
-    if ($page > $total_pages)
-        $page = $total_pages;
-    $start = $limit * $page - $limit;
-    if ($start < 0)
-        $start = 0;
+        $responce->total=$total_pages;
+        $responce->page =$page;
+        $responce->records=$count;
+        echo json_encode($responce);
+        break;
+    case "detailtable":
+        global $konek;
 
-    $SQL = "SELECT transaksi.*, gender.nama as genders FROM transaksi LEFT JOIN gender on gender.id = transaksi.gender_id where $search ORDER BY $sidx $sord LIMIT $start , $limit";
-    $result = mysqli_query($konek, $SQL) or die("Couldn't execute query." . mysqli_error($konek));
-    $responce = new stdClass();
-
-    // echo $SQL; return 0;
-    $i = 0;
-    while ($kolom = mysqli_fetch_assoc($result)){
-
-        $responce->rows[$i]['id'] = $kolom['id'];
-        $responce->rows[$i]['cell'] = array(
-            $kolom['nofaktur'],
-            date('d-m-Y', strtotime($kolom['tanggal'])),
-            $kolom['nama'],
-            $kolom['genders'],
-            $kolom['phone'],
-            $kolom['address'],
-            $kolom['saldo'],
-
-        );
-        $i++;
-    }
-
-    $total_pages = ceil($count / $limit);
-    $responce->total=$total_pages;
-    $responce->page =$page;
-    $responce->records=$count;
-    echo json_encode($responce);
-
+        $transaksi_id=$_GET['transaksi_id'];
+        $page = $_REQUEST['page'];
+        $limit = $_REQUEST['rows'];
+        $sidx = $_REQUEST['sidx'];
+        $sord = $_REQUEST['sord'];
+    
+        if (! $sidx){
+            $sidx = 1;
+        }
+        $result = mysqli_query($konek, "SELECT COUNT(*) AS count FROM transaksi_detail where transaksi_id = $transaksi_id  ");
+        $row = mysqli_fetch_array($result);
+        $count = $row['count'];
+        if ($count > 0 && $limit > 0) {
+            $total_pages = ceil($count / $limit);
+        } else {
+            $total_pages = 0;
+        }
+        if ($page > $total_pages)
+            $page = $total_pages;
+        $start = $limit * $page - $limit;
+        if ($start < 0)
+            $start = 0;
+    
+        $SQL = "SELECT * FROM transaksi_detail  where transaksi_id = '$transaksi_id' ORDER BY $sidx $sord";
+        $result = mysqli_query($konek, $SQL) or die("Couldn't execute query." . mysqli_error($konek));
+        $responce = new stdClass();
+    
+        // echo $SQL; return 0;
+        $i = 0;
+        while ($kolom = mysqli_fetch_assoc($result)){
+            $total = $kolom['harga'] * $kolom['quantity'];
+            $responce->rows[$i]['id'] = $kolom['id'];
+            $responce->rows[$i]['cell'] = array(
+                $kolom['barang'],
+                $kolom['harga'],    
+                $kolom['quantity'],
+                $total
+            );
+            $i++;
+        }
+    
+        $total_pages = ceil($count / $limit);
+        $responce->total=$total_pages;
+        $responce->page =$page;
+        $responce->records=$count;
+        echo json_encode($responce);        
+        break;
 
     default:
         // code...
