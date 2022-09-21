@@ -50,7 +50,7 @@ function create_detail($data,$id)
     $check = "SELECT * FROM transaksi where id = $id";
     if (run($check)) {
         $transaksi_id = $id;
-        $qry= "INSERT INTO transakssi_detail (barang,harga,quantity,transaksi_id) VALUES('$barang','$harga','$qty','$transaksi_id')";
+        $qry= "INSERT INTO transaksi_detail (barang,harga,quantity,transaksi_id) VALUES('$barang','$harga','$qty','$transaksi_id')";
         return run($qry);
     }
     return run($check);
