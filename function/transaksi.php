@@ -1,6 +1,4 @@
 <?php
-// require_once "core/init.php";
-
 function create_transaksi($data)
 {
     global $konek;
@@ -125,7 +123,7 @@ function delete_transaksi($id)
     $qry= "SELECT * FROM transaksi where id = $id";
     if (run($qry)) {
         $qry= "DELETE FROM transaksi WHERE id = $id";
-        return run($qry);
+        run($qry)? null : $all_query_ok=false;
     }else{
         $all_query_ok = false;
     }

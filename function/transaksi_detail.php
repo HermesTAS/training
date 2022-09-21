@@ -36,10 +36,6 @@ function edit_detail($data,$id)
 }
 function create_detail($data,$id)
 {
-   
-// if( isset($data['barang']) ||  isset($data['qty']) ||  isset($data['harga'])) {
-//     return false;
-// }
     $barang  = strtoupper($data['barang']);
     $qty  = strtoupper($data['qty']);
 
