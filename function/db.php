@@ -10,5 +10,5 @@ $konek= mysqli_connect($host,$user,$pass,$dbase);
 if(! $konek){
 	die("ada eror");
 }
-
+// mysqli_autocommit($konek,FALSE);
 ?>

@@ -22,9 +22,11 @@ $customers = report();
   <script type="text/javascript">
       function Start() {
         Stimulsoft.Base.StiLicense.loadFromFile("<?= $stireport_path ?>stimulsoft/license.php");
+        var viewerOptions = new Stimulsoft.Viewer.StiViewerOptions()
+        
+        var viewer = new Stimulsoft.Viewer.StiViewer(viewerOptions, "StiViewer", false)
         var report = new Stimulsoft.Report.StiReport()
-
-        var viewer = new Stimulsoft.Viewer.StiViewer(null, "StiViewer", false)
+  
         var options = new Stimulsoft.Designer.StiDesignerOptions()
         options.appearance.fullScreenMode = true
   
@@ -33,17 +35,17 @@ $customers = report();
         var dataSet = new Stimulsoft.System.Data.DataSet("Data")
   
         viewer.renderHtml('content')
-        report.loadFile('view/reports/PelangganLaporan.mrt')
+        report.loadFile('view/reports/MasterDetail.mrt')
   
-        report.dictionary.dataSources.clear()
+        // report.dictionary.dataSources.clear()
         
         dataSet.readJson(<?php echo json_encode($customers) ?>)
         
         report.regData(dataSet.dataSetName, '', dataSet)
-        report.dictionary.synchronize()
+        // report.dictionary.synchronize()
         
         // var dataRelation = new Stimulsoft.Report.Dictionary.StiDataRelation("relation", "relation", "relation", report.dictionary.dataSources.getByName("customers"), report.dictionary.dataSources.getByName("orders"), ["no_invoice"],  ["no_invoice"]);
-        
+
         // report.dictionary.relations.add(dataRelation)
         report.dictionary.synchronize()
         

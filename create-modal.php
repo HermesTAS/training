@@ -89,26 +89,41 @@
 
 	<br>
 
-	<!-- <table width="100%" class="table ui-state-default" cellpadding="5" cellspacing="0" id="detailData">
+	<table width="100%" class="table ui-state-default" cellpadding="5" cellspacing="0" id="detailData">
 		<thead>
 			<tr>
-				<th class="ui-th-div">Item Name</th>
-				<th class="ui-th-div">Item Price</th>
+				<th class="ui-th-div">Barang</th>
+				<th class="ui-th-div">Harga</th>
 				<th class="ui-th-div">Qty</th>
+				<th class="ui-th-div">Total Harga</th>
 				<th class="ui-th-div">Action</th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr>
-				<td>
-					<input type="text" name="item_name[]" class="FormElement ui-widget-content ui-corner-all" required autocomplete="off">
+				<td  class="errorForm" id="barangError">
+					<span id="" class="">barang Harus diisi</span>
+				</td>
+				<td  class="errorForm" id="hargaError">
+					<span id="" class="">harga Harus diisi</span>
 				</td>
 				<td>
-					<input type="text" name="item_price[]" class="FormElement ui-widget-content ui-corner-all im-currency" required autocomplete="off">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<input type="text" name="barang[]" class="FormElement ui-widget-content ui-corner-all" required autocomplete="off">
 				</td>
 				<td>
-					<input type="text" name="qty[]" class="FormElement ui-widget-content ui-corner-all im-numeric" required autocomplete="off">
+					<input type="text" id="harga0" name="harga[]" onkeyup="cal(0)"  class="hargaCal FormElement ui-widget-content ui-corner-all im-numeric im-currency" required autocomplete="off">
 				</td>
+				<td>
+					<input type="text" id="qty0" name="qty[]"  onkeyup="cal(0)" class="FormElement ui-widget-content im-currency ui-corner-all im-numeric" required autocomplete="off">
+				</td>
+				<td>
+					<input type="text" id="total_item0" readonly name="total_item[]"  class="total FormElement ui-widget-content ui-corner-all " required autocomplete="off">
+				</td>
+				
 				<td>
 					<a href="javascript:">
 						<span class="ui-icon ui-icon-trash" onclick="$(this).parent().parent().parent().remove()"></span>
@@ -124,40 +139,52 @@
 				</td>
 			</tr>
 		</tbody>
-	</table> -->
+	</table>
 </form>
 
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		let index = 0
-
+		// let index = 0
+		// var a= 123456789;
+		// var b= 234567891234;
+		// var c =BigInt(a*b)
+		// $('#total_item0').val(c);
+		// console.log(c);
 		setDateFormat()
 		setNumericFormat()
 		formBindKeys()
+		
 	})
+	var indexRows = 1;
+	function addRow() {
+		indexRows++;
 
-	// function addRow() {
-	// 	$('#detailData tbody tr').last().before(`
-	// 		<tr>
-	// 			<td>
-	// 				<input type="text" name="item_name[]" class="FormElement ui-widget-content ui-corner-all" required autocomplete="off">
-	// 			</td>
-	// 			<td>
-	// 				<input type="text" name="item_price[]" class="FormElement ui-widget-content ui-corner-all im-currency" required autocomplete="off">
-	// 			</td>
-	// 			<td>
-	// 				<input type="text" name="qty[]" class="FormElement ui-widget-content ui-corner-all im-numeric" required autocomplete="off">
-	// 			</td>
-	// 			<td>
-	// 				<a href="javascript:">
-	// 					<span class="ui-icon ui-icon-trash" onclick="$(this).parent().parent().parent().remove()"></span>
-	// 				</a>
-	// 			</td>
-	// 		</tr>
-	// 	`)
-	// }
-
+		$('#detailData tbody tr').last().before(`
+			<tr>
+				<td>
+					<input type="text" name="barang[]" class="FormElement ui-widget-content ui-corner-all" required autocomplete="off">
+				</td>
+				<td>
+					<input type="text" id="harga${indexRows}" name="harga[]" onkeyup="cal(${indexRows})" class="hargaCal FormElement ui-widget-content ui-corner-all im-numeric im-currency" required autocomplete="off">
+				</td>
+				<td>
+					<input type="text" id="qty${indexRows}" name="qty[]" onkeyup="cal(${indexRows})" class="qtyCal FormElement ui-widget-content ui-corner-all im-numeric im-currency"  required autocomplete="off">
+				</td>
+				<td>
+					<input type="text" id="total_item${indexRows}" readonly  class="total FormElement ui-widget-content ui-corner-all im-numeric" required autocomplete="off">
+				</td>
+				
+				<td>
+					<a href="javascript:">
+						<span class="ui-icon ui-icon-trash" onclick="$(this).parent().parent().parent().remove()"></span>
+					</a>
+				</td>
+			</tr>
+		`)
+		$('.total').css('text-align', 'right');
+	}
+	
 	function setDateFormat() {
 		$('.hasDatePicker').datepicker({
 			dateFormat: 'dd-mm-yyyy',
@@ -188,21 +215,33 @@
 			}
 		})
 	}
-
+	$('.total').css('text-align', 'right');
 	function setNumericFormat() {
 		$('.im-numeric').keypress(function(e){
 			if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
 			  return false;
 			}
 		})
+		// new AutoNumeric.multiple('.im-currency', {
+		// 	currencySymbol :'idr ' ,
+		// 	digitGroupSeparator	:'.',
+		// 	decimalCharacter:',',
+		// 	allowDecimalPadding:false
+		// })
+		// .css('text-align', 'right');
+		
+		
+		$('.im-currency').inputmask('integer', {
+			alias: 'numeric',
+			groupSeparator: ',',
+			autoGroup: true,
+			digitsOptional: false,
+			allowMinus: false,
+			placeholder: '',
+		}).css('text-align', 'right');
     }
 
-    new AutoNumeric('.im-currency', {
-        currencySymbol :'idr ' ,
-        digitGroupSeparator	:'.',
-        decimalCharacter:',',
-        // allowDecimalPadding:false
-    });
+
     $('.im-phone').inputmask("+62 999-9999-99999");
 
 	$.ajax({
@@ -218,6 +257,35 @@
 			})
 		}
 	})
+
+	function cal(id) {
+		harga =$('#harga'+id).val();
+		qty =$('#qty'+id).val();
+		harga = Number(harga.replace(/[^0-9-]+/g,""));
+		qty = Number(qty.replace(/[^0-9-]+/g,""));
+
+		hasil = (harga) * (qty);
+		hasil =BigInt(harga*qty)
+
+		$str = total_group(hasil)
+
+		$('#total_item'+id).val(str);
+	}
+
+	function total_group (result){
+		hasil=result.toString();
+		// console.log(hasil.length);
+		mod = hasil.length % 3;
+		kepala_hasil = hasil.substring(0,mod);
+		ekor_hasil = hasil.substring(mod);
+		ekor = ekor_hasil.match(/.{1,3}/g);
+		str= kepala_hasil;
+		ekor.forEach(element => {
+			str += ','+element;
+		});
+		if(!kepala_hasil) str = str.substring(1);
+		return str;
+	}
 
 	function formBindKeys() {
 		let inputs = $('#transaksiForm [name]:not(:hidden)')

@@ -3,7 +3,6 @@ require_once "core/init.php";
 function report()
 {
     global $konek;
-    $pelanggan = read();
     $search="";
     if (isset($_REQUEST['global_search']) && strlen($_REQUEST['global_search'])) {
         $global_search = $_REQUEST['global_search'];
@@ -56,6 +55,11 @@ function report()
     }
 
     $SQL = "SELECT transaksi.*, gender.nama as genders FROM transaksi LEFT JOIN gender on gender.id = transaksi.gender_id where $search ORDER BY $sidx $sord LIMIT $start , $limit ";
+    // $SQL = "SELECT transaksi.*, transaksi_detail.*, gender.nama as genders 
+    // FROM transaksi 
+    // LEFT JOIN gender on gender.id = transaksi.gender_id 
+    // INNER JOIN transaksi_detail on transaksi.id = transaksi_detail.transaksi_id 
+    // where $search ORDER BY $sidx $sord LIMIT $start , $limit ";
     $result = mysqli_query($konek, $SQL) or die("Couldn't execute query." . mysqli_error($konek));
     $responce = new stdClass();
 
@@ -63,12 +67,19 @@ function report()
     $i = 0;
     $data = [];
     while ($kolom = mysqli_fetch_assoc($result)){
-        // $curency = number_format($kolom['saldo'],0,',','.');
-        // $kolom['saldo'] ='Rp. '.$curency;
+        $curency = number_format($kolom['saldo'],0,',','.');
+        $kolom['detail'] =[];
+        $kolom['transaksi_id'] = $kolom['id'];
+        $sqldetail =  mysqli_query($konek, "SELECT * FROM transaksi_detail where transaksi_id = {$kolom['id']}");
+        $j = 0;
+        while ($detail = mysqli_fetch_assoc($sqldetail)){
+            $kolom['detail'][$j]=$detail;
+            $j++;
+        }
+
         $data[$i] = $kolom;
         $i++;
     }
-    
     return json_encode($data);
 
 }
