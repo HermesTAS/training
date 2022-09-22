@@ -3,6 +3,7 @@ require_once "core/init.php";
 require 'vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+// use PhpOffice\PhpSpreadsheet\Settings;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 require_once "function/report.php";
@@ -10,10 +11,8 @@ $customers = json_decode(report());
 $spreadsheet = new Spreadsheet();
 $sheet = $spreadsheet->getActiveSheet();
 
-
-
-
-
+\PhpOffice\PhpSpreadsheet\Shared\StringHelper::setDecimalSeparator( '.' );
+\PhpOffice\PhpSpreadsheet\Shared\StringHelper::setThousandsSeparator( ',' );
 $row=1;
 foreach ($customers as $customer) {
     $no =$row-1;

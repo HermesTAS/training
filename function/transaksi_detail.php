@@ -41,7 +41,10 @@ function create_detail($data,$id)
 
     $harga = $data['harga'];
     $harga = str_replace("idr ","",$harga);
-    $harga = str_replace(".","",$harga);
+    $harga = str_replace(",","",$harga);
+    $qty = $data['qty'];
+    $qty = str_replace("idr ","",$qty);
+    $qty = str_replace(",","",$qty);
 
     $check = "SELECT * FROM transaksi where id = $id";
     if (run($check)) {

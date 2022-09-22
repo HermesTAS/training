@@ -12,8 +12,8 @@ function create_transaksi($data)
     $phone  = $data['phone'];
     $saldo  = $data['saldo'];
     $address    = strtoupper($data['address']);
-    $saldo = substr($saldo,4);
-    $saldo = str_replace(".","",$saldo);
+    // $saldo = substr($saldo,4);
+    $saldo = str_replace(",","",$saldo);
     $tanggalfaktur = date("Y-m-d", strtotime($tanggalfaktur));
     $phone = str_replace("_","",$phone);
     if(substr($phone,-1) == "-"){
@@ -34,8 +34,6 @@ function create_transaksi($data)
                     "qty" =>$data['qty'][$i],
                 ];
                 create_detail($detail,$id)? null : $all_query_ok=false;
-                
-
             }
 
         }
@@ -54,8 +52,11 @@ function create_transaksi($data)
 
 function find_transaksi($id)
 {
-    $qry= "SELECT * FROM transaksi where id = $id";
-    return result($qry);
+    $SQL = "SELECT transaksi.*, gender.nama as genders FROM transaksi LEFT JOIN gender on gender.id = transaksi.gender_id where transaksi.id = $id";
+    // echo $SQL;
+    // return 0;
+    // $SQL= "SELECT * FROM transaksi  where id = $id";
+    return result($SQL);
 }
 
 function update_transaksi($data,$id)
@@ -75,7 +76,7 @@ function update_transaksi($data,$id)
         $saldo  = strtoupper($data['saldo']);
         $address    = strtoupper($data['address']);
         // $saldo = substr($saldo,4);
-        $saldo = str_replace(".","",$saldo);
+        $saldo = str_replace(",","",$saldo);
         $tanggalfaktur = date("Y-m-d", strtotime($tanggalfaktur));
         $phone = str_replace("_","",$phone);
         if(substr($phone,-1) == "-"){
@@ -135,15 +136,6 @@ function delete_transaksi($id)
         mysqli_rollback($konek);
         return false;
     }
-}
-
-function testtrans($data)
-{
-    global $konek;
-    
-    $qry= "INSERT INTO trans (nama,umur,phone) VALUES ('{$data['nama']}','{$data['umur']}','{$data['phone']}')";
-    return run($qry);
-    return mysqli_query($konek,$qry);
 }
 
 ?>

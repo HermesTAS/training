@@ -248,7 +248,7 @@ require_once 'core/init.php';
 		// $('.im-currency').css('text-align', 'right');
 		$('.im-currency').inputmask('integer', {
 			alias: 'numeric',
-			groupSeparator: '.',
+			groupSeparator: ',',
 			autoGroup: true,
 			digitsOptional: false,
 			allowMinus: false,

@@ -134,8 +134,8 @@ function loadtransaksiTable() {
 				formatter: 'integer',
 				formatoptions: { 
 					decimalPlaces: 0,
-					decimalSeparator: ',',
-					thousandsSeparator: '.',
+					// decimalSeparator: ',',
+					// thousandsSeparator: '.',
 				}
 
 	        },
@@ -345,8 +345,8 @@ function loadDetailTable() {
 				align: 'right',
 				formatoptions: {
 					decimalPlaces: 0,
-					decimalSeparator: ',',
-					thousandsSeparator: '.',
+					// decimalSeparator: ',',
+					// thousandsSeparator: '.',
 				},
 			},
 			{
@@ -354,7 +354,13 @@ function loadDetailTable() {
 				name: 'quantity',
 				label: 'quantity',
 				align: 'right',
-				
+				formatter: 'currency',
+
+				formatoptions: {
+					decimalPlaces: 0,
+					// decimalSeparator: ',',
+					// thousandsSeparator: '.',
+				},
 			},
 			{
 				index: 'total',
@@ -364,8 +370,8 @@ function loadDetailTable() {
 				align: 'right',
 				formatoptions: {
 					decimalPlaces: 0,
-					decimalSeparator: ',',
-					thousandsSeparator: '.',
+					// decimalSeparator: ',',
+					// thousandsSeparator: '.',
 				},
 			},
 			// {
@@ -570,7 +576,7 @@ function edittransaksi(nofaktur) {
 		modal: true,
 		title: "Edit transaksi",
 		height: '500',
-		width: '650',
+		width: '950',
 		position: [0, 0],
 		buttons: {
 			'Save': function() {
@@ -631,7 +637,7 @@ function confirmDeletetransaksi(nofaktur) {
 		modal: true,
 		title: "Delete transaksi",
 		height: '500',
-		width: '650',
+		width: '950',
 		position: [0, 0],
 		buttons: {
 			'Delete': function() {

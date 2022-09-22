@@ -1,10 +1,10 @@
 {
-  "ReportGuid": "d1036119217707ac1a2abbe41d3b7a84",
+  "ReportGuid": "ad18347bb9d73bef6d42da482b40f6ff",
   "ReportName": "Report",
   "ReportAlias": "Report",
   "ReportFile": "MasterDetail.mrt",
   "ReportCreated": "/Date(1627890106000+0700)/",
-  "ReportChanged": "/Date(1663741934000+0700)/",
+  "ReportChanged": "/Date(1663752528000+0700)/",
   "EngineVersion": "EngineV2",
   "CalculationMode": "Interpretation",
   "ReportUnit": "Centimeters",
@@ -1053,9 +1053,8 @@
               "TextFormat": {
                 "Ident": "StiCurrencyFormatService",
                 "NegativePattern": 0,
-                "DecimalSeparator": ",",
                 "DecimalDigits": 0,
-                "GroupSeparator": ".",
+                "GroupSeparator": ",",
                 "UseLocalSetting": false,
                 "PositivePattern": 0,
                 "Symbol": "Rp. "

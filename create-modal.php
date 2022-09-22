@@ -233,7 +233,7 @@
 		
 		$('.im-currency').inputmask('integer', {
 			alias: 'numeric',
-			groupSeparator: '.',
+			groupSeparator: ',',
 			autoGroup: true,
 			digitsOptional: false,
 			allowMinus: false,
@@ -281,7 +281,7 @@
 		ekor = ekor_hasil.match(/.{1,3}/g);
 		str= kepala_hasil;
 		ekor.forEach(element => {
-			str += '.'+element;
+			str += ','+element;
 		});
 		if(!kepala_hasil) str = str.substring(1);
 		return str;

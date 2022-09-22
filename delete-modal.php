@@ -42,7 +42,7 @@ require_once 'core/init.php';
 				<label>Gender</label>
 			</td>
 			<td>
-				<select id="gender" class="FormElement ui-widget-content ui-corner-all" readonly name="gender_id" value="<?=$find['gender_id']?>" required></select>
+				<input type="text" readonly name="nama" value="<?=$find['genders']?>" class="FormElement ui-widget-content ui-corner-all" required autocomplete="off">
 			</td>
 		</tr>
 		<tr>
@@ -79,7 +79,8 @@ require_once 'core/init.php';
 			<tr>
 			<th class="ui-th-div">Barang</th>
 				<th class="ui-th-div">Harga</th>
-				<th class="ui-th-div">Action</th>
+				<th class="ui-th-div">Qty</th>
+				<th class="ui-th-div">Total Harga</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -135,14 +136,16 @@ require_once 'core/init.php';
 			  return false;
 			}
 		})
+		
+		$('.im-currency').inputmask('integer', {
+			alias: 'numeric',
+			groupSeparator: ',',
+			autoGroup: true,
+			digitsOptional: false,
+			allowMinus: false,
+			placeholder: '',
+		}).css('text-align', 'right');
     }
-
-    new AutoNumeric('.im-currency', {
-        currencySymbol :'idr ' ,
-        digitGroupSeparator	:'.',
-        decimalCharacter:',',
-        // allowDecimalPadding:false
-    });
     $('.im-phone').inputmask("+62 999-9999-99999");
 
 	$.ajax({
@@ -172,33 +175,30 @@ require_once 'core/init.php';
 		dataType: 'JSON',
 		success: function(res) {
 			res.forEach(function(el, i) {
+				total = el.harga * el.quantity;
 				$('#detailData tbody tr').last().before(`
-					<tr>
-						<td>
-							<input type="text" readonly name="barang[]" value="${el.barang}" class="FormElement ui-widget-content ui-corner-all" required autocomplete="off">
-						</td>
-						<td>
-							<input type="text" readonly name="harga[]" value="${el.harga}" class="FormElement ui-widget-content ui-corner-all im-currencyt" required autocomplete="off">
-						</td>
-						
-						<td>
-							<a href="javascript:">
-								<span class="ui-icon ui-icon-trash" onclick="$(this).parent().parent().parent().remove()"></span>
-							</a>
-						</td>
-					</tr>
+				<tr>
+					<td>
+						<input type="text" value="${el.barang}" readonly name="barang[]" class="FormElement ui-widget-content ui-corner-all" required autocomplete="off">
+					</td>
+					<td>
+						<input type="text" id="harga${el.id_detail}" value="${el.harga}" readonly name="harga[]" onkeyup="cal(${el.id_detail})" class="hargaCal FormElement ui-widget-content ui-corner-all im-numeric im-currency formcur" required autocomplete="off">
+					</td>
+					<td>
+						<input type="text" id="qty${el.id_detail}" value="${el.quantity}" readonly name="qty[]" onkeyup="cal(${el.id_detail})" class="qtyCal FormElement ui-widget-content ui-corner-all im-currency" required autocomplete="off">
+					</td>
+					<td>
+						<input type="text" id="total_item${el.id_detail}" readonly value="${total}" readonly name="total_item[]" class="FormElement ui-widget-content ui-corner-all im-numeric im-currency formcur" required autocomplete="off">
+					</td>
+					
+					
+				</tr>
 				`)
-				AutoNumeric.multiple('.im-currencyt',{
-					currencySymbol :'idr ' ,
-					digitGroupSeparator	:'.',
-					decimalCharacter:',',
-					allowDecimalPadding:false
-
-				});
+				setNumericFormat();
+				
 			})
 		}
 	})
-
 
 	function formBindKeys() {
 		let inputs = $('#customerForm [name]:not(:hidden)')
